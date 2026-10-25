@@ -26,9 +26,14 @@ case "$#" in
     # [2] 確認した日時を、世界標準時で checked_at に入れます。
     checked_at=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
 
-    # [3] template.md の二つの印を上の値に置き換え、report.md に書き出します。
+    # [3] 実行しているマシンの識別名を、machine_name に入れます。
+    # /proc/sys/kernel/hostname は、マシンが自分の識別名を書いているファイルです。
+    machine_name=$(cat /proc/sys/kernel/hostname)
+
+    # [4] template.md の二つの印を上の値に置き換え、report.md に書き出します。
     #     区切りに | を使うのは、値に / が入っても壊れないようにするためです。
     sed -e "s|{{CHECKED_AT}}|$checked_at|g" \
+        -e "s|{{MACHINE_NAME}}|$machine_name|g" \
         -e "s|{{HTTP_STATUS}}|$http_status|g" template.md > report.md
 
     printf '%s\n' 'report.md を生成しました。'
